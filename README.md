@@ -39,55 +39,74 @@ React:
 
 ### Links
 
-- Solution Github URL: [https://github.com/Rod-Barbosa/momentumClone](https://github.com/Rod-Barbosa/momentumClone)
-- Live Site URL: no live site for chrome extension, jsut download the repo and install on your browser
-
+- Solution Github URL: [github.com/Rod-Barbosa/meme-generator](https://github.com/Rod-Barbosa/meme-generator)
+- Live Site URL: [rodrigo-meme-generator.netlify.app/](https://rodrigo-meme-generator.netlify.app/)
 ## My process
 
 ### Built with
 
-- Semantic HTML5 markup
+- React
+- React Hooks
 - CSS custom properties
 - JavaScript
-- Chrome Dev Tools
 
 ### What I learned
 
-This makes the background walways pretty
-```css
-body {
-    background: no-repeat center center fixed; 
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    -o-background-size: cover;
-    background-size: cover;
+This is the meat nad potatoes of the project. Getting familiar with useSate (instead of writing the same code in componentDidMount and in componentDidUpdate). The construnction via destructuring is very handy here and makes the code look so clean.
+```React
+export default function Meme() {
+    const [meme, setMeme] = React.useState({
+        topText: "",
+        bottomText: "",
+        randomImage: "http://i.imgflip.com/1bij.jpg" 
+    })
+    const [allMemes, setAllMemes] = React.useState([])
+```
+
+Also, handleChange using hte function from useState is always gonna be there in the future. the [name]: value is the reason why the new react is so much better than the old react. The {name, value} is just like the [meme, setMeme] idea from useState. God bless the guy who came up with that.
+
+```React
+function handleChange(event) {
+    const {name, value} = event.target
+    setMeme(prevMeme => ({
+        ...prevMeme,
+        [name]: value
+    }))
+```
+
+From inputs tend to not inherit the font family property from body
+also, tex-indent is a nice little trick to avoid doing ::place-holder sudo-class
+```CSS
+.form--input{
+    font-family: "Karla", sans-serif;
+    border-radius: 5px;
+    border: 1px solid #D5D4D8;
+    text-indent: 5px;
 }
 ```
 
-Making letters easier to read on a picture background
-```css
-{
-    text-shadow: 0px 0px 20px #aaaaaa;
-    text-shadow: 1px 1px 2px #474747;
-}
-```
-
-To work with view hight without running into margins forcing scrolling
-```css
-* {
-    box-sizing: border-box;
-}  
+In order to make an API call with Effects Hook all you got to do is put the async function inside another callback function. That way single source of truth is respected. The dependencies array should be empty, because we don't want to be calling the API every time we get one image to display for the user.
+```React
+    React.useEffect(() => {
+        async function getMemes() {
+            const res = await fetch("https://api.imgflip.com/get_memes")
+            const data = await res.json()
+            setAllMemes(data.data.memes)
+        }
+        getMemes()
+    }, [])
 ```
 
 ### Continued development
 
-This could go 1000 different directions, but just adding stuff to the screen seems counter productive to a tab extension that is supposed to free your mind from being bombarded by too much information
+The project doesn't work most of the time, but it is a sufficient MVP. It should remain like that.
 
 ### Useful resources
 
-- [Geolocation API](https://developer.mozilla.org/en-US/docs/Web/API/Geolocation_API/Using_the_Geolocation_API#getting_the_current_position) - Specially cool to use the lon and lat params
-- [Javascript Clock Updated every second](https://stackoverflow.com/questions/39418405/making-a-live-clock-in-javascript) - setInterval(function, 1000) saves the day once again
-- [Crypto API](https://www.coingecko.com/en/api/documentation) - Coingecko seems overloaded and slow, but it gets the job done
+- [Original Figma](https://www.figma.com/file/ddnBbolMmjumqfXXzGKq62/Meme-Generator-(Copy)?node-id=2%3A2) - Always good to have the reference
+- [Make image face the other way](https://www.codegrepper.com/code-examples/css/+make+the+image+to+face+left+to+right+using+css) - transform: scaleX(-1)
+- [React Forms](https://reactjs.org/docs/forms.html) - Basics for React Forms, and why they screw up with single source of truth
+- [React State Hook](https://reactjs.org/docs/hooks-state.html) - ComponentDidMount can blow me
 
 ## Author
 
